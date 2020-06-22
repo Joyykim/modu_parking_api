@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'modu_parking_api.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'modu_parking_api.settings.dev')
 
 application = get_wsgi_application()
