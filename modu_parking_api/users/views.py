@@ -54,12 +54,17 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response({"detail": "Account successfully deleted."},
                         status=status.HTTP_204_NO_CONTENT)
 
-    # @action(detail=True, methods=['get'])
-    # def bookmark(self, request):
-    #     try:
-    #         user = self.get_object()
-    #     except (AttributeError, ObjectDoesNotExist):
-    #         return Response({"detail": "Not authorized User."},
-    #                         status=status.HTTP_400_BAD_REQUEST)
-    #     bookmarks = user.bookmark.all()
-    #     return Response(bookmarks)
+    @action(detail=True, methods=['get'])
+    def bookmark(self, request):
+        try:
+            user = self.get_object()
+        except (AttributeError, ObjectDoesNotExist):
+            return Response({"detail": "Not authorized User."},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if user.bookmark.all().exists():
+            bookmarks = user.bookmark.all()
+            return Response(bookmarks)
+        else:
+            return Response({"detail": "There are no bookmarks that has been saved."},
+                            status=status.HTTP_400_BAD_REQUEST)
