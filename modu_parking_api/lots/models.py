@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.gis.db import models
+from django.contrib.gis.db import models as db_models
+
 
 class Lot(models.Model):
     name = models.CharField(max_length=100)
@@ -13,4 +14,5 @@ class Lot(models.Model):
     time_weekdays = models.CharField(max_length=30)
     time_weekends = models.CharField(max_length=30)
     section_count = models.IntegerField(default=0)
-    distance = models.PointField(null=False, blank=False, srid=4326, verbose_name='distance')
+
+    distance = db_models.PointField(null=False, blank=False, srid=4326, verbose_name='distance')
