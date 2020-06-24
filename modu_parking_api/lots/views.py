@@ -9,6 +9,7 @@ from lots.filters import OrderedDistanceToPointFilter
 from lots.models import Lot
 from lots.serializers import LotsSerializer
 from users.models import User
+import math
 
 
 class LotsViewSet(viewsets.ModelViewSet):
@@ -25,40 +26,33 @@ class LotsViewSet(viewsets.ModelViewSet):
     serializer_class = LotsSerializer
     OrderedDistanceToPointFilter()
 
-    def filter_queryset(self, queryset):
-        if  self.action == 'order':
-            if self.data
-
-        for backend in list(self.filter_backends):
-            queryset = backend().filter_queryset(self.request, queryset, self)
-        return queryset
-
-        return super().filter_queryset(queryset)
+    # def filter_queryset(self, queryset):
+    #     if self.request.data['order'] == 'price':
+    #         self.queryset = Lot.objects.filter().order_by('basic_rate')
+    #     elif self.request.data['order'] == 'distance':
+    #
+    #         distance = self.request.data.pop('zoom_level')  # 줌레벨
+    #         lat = self.request.data['lat']
+    #         lon = self.request.data['lon']
+    #
+    #         ref_location = Point(lon, lat)
+    #         queryset = Lot.objects.filter(
+    #             location__distance_lte=(
+    #                 ref_location,
+    #                 D(m=distance)
+    #             )
+    #         ).distance(ref_location).order_by('distance')
+    #         return queryset
+    #
+    #     return super().filter_queryset(queryset)
 
     @action(detail=False)
     def order(self, request, *args, **kwargs):
-
-        queryset = self.queryset
-        if request.data['order'] == 'price':
-            self.queryset = Lot.objects.filter().order_by('basic_rate')
-        elif request.data['order'] == 'distance':
-            distance = request.data.pop('distance')
-            lat = request.data['lat']
-            lon = request.data['lon']
-
-            ref_location = Point(lon, lat)
-            queryset = Lot.objects.filter(
-                location__distance_lte=(
-                    ref_location,
-                    D(m=distance)
-                )
-            ).distance(ref_location).order_by('distance')
-
         # page = self.paginate_queryset(queryset)
         # if page is not None:        #     serializer = self.get_serializer(page, many=True)
         #     return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(self.queryset, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
@@ -67,3 +61,41 @@ class LotsViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         pass
+
+
+def distance(origin, destination):
+    lat1, lon1 = origin
+    lat2, lon2 = destination
+    radius = 6371  # km
+
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = math.sin(dlat / 2) * math.sin(dlat / 2) + math.cos(math.radians(lat1)) \
+        * math.cos(math.radians(lat2)) * math.sin(dlon / 2) * math.sin(dlon / 2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    d = radius * c
+
+    return d
+
+
+def ds():
+    variable_for_lat = 0.0083  # 반경 0.5 키로
+    variable_for_lng = 0.009197  # 반경 0.5키로
+    # 키로당 단위로 받는다는거
+    request_lng = request.query_params.get('reqLat')
+    request_lat = request.query_params.get('reqLng')
+    request_lng = float(request_lng)
+    request_lat = float(request_lat)
+    distance = request.query_params.get('distance')
+    distance = float(distance)
+    boundary = {
+        "max_lat": request_lng + variable_for_lng * distance,
+        "min_lat": request_lng - variable_for_lng * distance,
+        "max_lng": request_lat + variable_for_lat * distance,
+        "min_lng": request_lat - variable_for_lat * distance,
+    }
+
+    post = PostRoom.objects.filter(lng__gte=boundary['min_lng'], lng__lte=boundary['max_lng']) \
+        .filter(lat__gte=boundary['min_lat'], lat__lte=boundary['max_lat'])
+    serializer = PostTinySerializer(post, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)

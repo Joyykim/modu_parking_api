@@ -5,7 +5,7 @@ from django.contrib.gis.db import models as db_models
 class Lot(models.Model):
     name = models.CharField(max_length=100)
     address = models.CharField(max_length=100)
-    phone_num = models.CharField(max_length=100)
+    # phone_num = models.CharField(max_length=100)
     latitude = models.FloatField(default=0.0)
     longitude = models.FloatField(default=0.0)
     basic_rate = models.IntegerField(default=0)
