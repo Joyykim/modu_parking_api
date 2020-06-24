@@ -49,7 +49,6 @@ class ParkingViewSet(mixins.CreateModelMixin,
         # total_fee = lot_ins.basic_rate
         pass
 
-
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def list(self):
         """
@@ -60,12 +59,12 @@ class ParkingViewSet(mixins.CreateModelMixin,
 
     @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
     def partial_update(self, request, *args, **kwargs):
-        """주차시간을 추가(추가결제) total_Fee 계산할 자료 제공"""
-        """REQ - extension_time"""
-        """RES - extension_time, extension_rate, basic_rate, basic_time"""
+        """
+        주차시간을 추가(추가결제) total_Fee 계산할 자료 제공
+        REQ - extension_time
+        RES - extension_time, extension_rate, basic_rate, basic_time
 
-        """ 
-        input : parking time (2H), lot_id(2)
+                input : parking time (2H), lot_id(2)
 
         lot.basic , lot.additionalRate >> 해당 주차장의 기본 요금 * 1시간 + 추가 비용*(1시간 부터 끝나는 시간까지) == totalFee
         additionalRate == 추가 비용(30분 기준, 올림) *(1시간 부터 끝나는 시간까지)
