@@ -58,19 +58,39 @@ class ParkingViewSet(mixins.CreateModelMixin,
         # 현재 시간 기준으로, 주차 만료 예상 시간.
         now = datetime.datetime.now()
         end_time = now + timedelta(hours=parking_time)
-
-        data = {
-            "total_fee": total_fee,
-            "start_time": now,
-            "parking_time": parking_time,
-            "lot": lot_ins.name,
-            "end_time": end_time
-        }
-         return Response(data=data, status=status.HTTP_201_CREATED)
+        pass
 
     # @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     # def list(self):
+    #     pass
     #     """
+    #     주차세부정보(총비용, 주차장 기본 정보)
+    #     RES-total_fee, start_time, end_time, parking_time, lot(foreign)
+    #     extension_rate, extension_time, original_rate(foreign key from lot)
+    #     """
+    #
+    # @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
+    # def partial_update(self, request, *args, **kwargs):
+    #     pass
+    #     """
+    #     주차시간을 추가(추가결제) total_Fee 계산할 자료 제공
+    #     REQ - extension_time
+    #     RES - extension_time, extension_rate, basic_rate, basic_time
+    #
+    #             input : parking time (2H), lot_id(2)
+    #
+    #     data = {
+    #         "total_fee": total_fee,
+    #         "start_time": now,
+    #         "parking_time": parking_time,
+    #         "lot": lot_ins.name,
+    #         "end_time": end_time
+    #     }
+    #      return Response(data=data, status=status.HTTP_201_CREATED)
+    #
+    # # @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    # # def list(self):
+    # #     """
     #     주차세부정보(총비용, 주차장 기본 정보)
     #     RES-total_fee, start_time, end_time, parking_time, lot(foreign)
     #     extension_rate, extension_time, original_rate(foreign key from lot)
