@@ -7,12 +7,14 @@ class LotsTestCase(APITestCase):
     def setUp(self) -> None:
         self.lat = 37.5
         self.lng = 126.5
+        self.zoom_lv = 2
 
         # create lots with different location
         for i in range(50):
             Lot.objects.create(latitude=self.lat, longitude=self.lng, name=f'{i}lot', )
             self.lat += 0.05
             self.lng += 0.01
+
         self.user_data = {
             'latitude': self.lat,
             'longitude': self.lng,
@@ -22,7 +24,7 @@ class LotsTestCase(APITestCase):
         user_location = {
             'latitude': self.lat,
             'longitude': self.lng,
-            'zoom_lv': 2  # In order to retrieve lots within 2km
+            'zoom_lv': 2                # In order to retrieve lots within 2km
         }
         response = self.client.get('/api/lots/map', data=user_location)
         self.assertEqual(response.status_code, 200)

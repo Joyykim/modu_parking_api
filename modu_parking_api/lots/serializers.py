@@ -26,10 +26,6 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 
-
-
-
-
 """
 lots app
 POST /lots/
