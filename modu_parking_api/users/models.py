@@ -11,23 +11,22 @@ class UserManager(BaseUserManager):
     A manager is an interface through which database query operations are provided to Django models.
     """
 
-    def _create_user(self, email, username, password, **extra_fields):
+    def _create_user(self, email, password, **extra_fields):
         """
         Create and save a user with the given email, username and password.
         """
         if not email:
             raise ValueError('The email must be set')
         email = self.normalize_email(email)
-        username = self.model.normalize_username(username)
-        user = self.model(email=email, username=username, **extra_fields)
+        user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_user(self, email, username, password=None, **extra_fields):
+    def create_user(self, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
-        return self._create_user(email, username, password, **extra_fields)
+        return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
@@ -46,12 +45,12 @@ class User(AbstractUser):
     Use an email address as the primary user identifier instead of a username for authentication
     """
     email = models.EmailField(max_length=100, unique=True, verbose_name='email')
-    username = models.CharField(max_length=30, null=True)
+    username = models.CharField(max_length=30, blank=True, null=True)
     phoneNum = models.IntegerField(default=None, blank=True, null=True)
     plateNum = models.CharField(default=None, blank=True, null=True, max_length=20)
     cardNum = models.IntegerField(default=None, blank=True, null=True)
     points = models.IntegerField(default=0)
-    bookmark = models.ManyToManyField(Lot, null=True)
+    bookmark = models.ManyToManyField(Lot, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
     objects = UserManager()  # Replace the default model manager with custom UserManager

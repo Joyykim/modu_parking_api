@@ -1,9 +1,11 @@
 import math
-
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
+# from lots.filters import OrderedDistanceToPointFilter
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from lots.models import Lot
 from lots.serializers import LotsSerializer, OrderSerializer, MapSerializer
 
@@ -23,7 +25,6 @@ class LotsViewSet(viewsets.ModelViewSet):
             return OrderSerializer(*args, **kwargs)
         elif self.action == 'map':
             return MapSerializer(*args, **kwargs)
-
         return super().get_serializer(*args, **kwargs)
 
     @action(detail=False)
@@ -43,4 +44,3 @@ def distance(origin, destination, radius=1):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     d = radius * c
 
-    return d
