@@ -60,4 +60,11 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
-
+    @staticmethod
+    def create_model():
+        for i in range(3):
+            User.objects.create(
+                email=f'user{i}@co.com',
+                username=f'사용자{i}',
+                password=1111,
+            )

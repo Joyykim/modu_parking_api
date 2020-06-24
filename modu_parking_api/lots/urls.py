@@ -1,7 +1,8 @@
 from rest_framework import routers
 
-from parkings.views import ParkingViewSet
+from lots import views
 
 router = routers.SimpleRouter(trailing_slash=False)
-router.register('parkings/', ParkingViewSet)
+router.register('lots/', views.LotsViewSet)
+
 urlpatterns = router.urls
