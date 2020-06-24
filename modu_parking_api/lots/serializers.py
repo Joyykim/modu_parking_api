@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from lots.models import Lot
 
 
@@ -24,15 +23,15 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Lot
         fields = ['id', 'name', 'basic_rate', 'distance']
 
+
+
+
 """
 lots app
-
 POST /lots/
 : 주차장 등록
-
 PUT /lots/id
 : 주차장 정보수정
-
 GET /lots/id
 : 주차장 세부정보
 
@@ -41,11 +40,8 @@ GET /lots/map(action)
 
 GET /lots/distance_odr(action) 
 : 주차장 목록 거리순 정렬
-
 GET /lots/price_odr(action) 
 : 주차장 목록 가격순 정렬
-
 DELETE /lots/id 
 : 주차장 삭제
-
 """
