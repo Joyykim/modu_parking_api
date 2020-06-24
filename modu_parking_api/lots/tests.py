@@ -51,6 +51,7 @@ class UrlTestCase(APITestCase):
         }
         response = self.client.get('/api/lots', data=data)
 
+
         self.assertEqual(response.status_code, 200)
         # res = Munch(response.data)
         user_position = (self.lat, self.lng)  # (lat, lon)
