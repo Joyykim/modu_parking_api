@@ -14,7 +14,7 @@ import parkings
 from lots.models import Lot
 from parkings import permissions
 from parkings.models import Parking
-from parkings.serializers import ParkingSerializer
+from parkings.serializers import ParkingSerializer, ParkingListSerializer
 
 
 class ParkingViewSet(mixins.CreateModelMixin,
@@ -27,6 +27,13 @@ class ParkingViewSet(mixins.CreateModelMixin,
     serializer = ParkingSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.CreateOwnTotalFee, IsAuthenticated)
+
+    def get_serializer_class(self):
+        if self.action in "list":
+            serializer_class = ParkingListSerializer
+        else:
+            serializer_class = ParkingSerializer
+        return serializer_class
 
     def get_permissions(self):
         if self.action in ['partial_update', 'update', 'destroy', 'list', 'perform_create']:
@@ -49,6 +56,29 @@ class ParkingViewSet(mixins.CreateModelMixin,
         lot_pk = request.data.get('lot')
         lot_ins = Lot.objects.get(pk=lot_pk)
         # lot_ins = Lot.objects.get(request.data.get('lot'))
+        # start_time = request.data.get('start_time')
+        # parking_time = request.data.get('parking_time')
+        # lot_ins = request.data.get('lot')
+        #
+        #
+        #
+        # total_fee = lot_ins.basic_rate
+        pass
+
+    # @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def list(self, request, *args, **kwargs):
+        """
+        주차세부정보(총비용, 주차장 기본 정보)
+        RES- id, total_fee, parking_time, lot_name
+        """
+        return super().list(request, *args, **kwargs)
+
+    # @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
+    def partial_update(self, request, *args, **kwargs):
+        """
+        주차시간을 추가(추가결제) total_Fee 계산할 자료 제공
+        REQ - extension_time
+        RES - extension_time, extension_rate, basic_rate, basic_time
 
         basic_hour = 1
         add_hour = parking_time - basic_hour

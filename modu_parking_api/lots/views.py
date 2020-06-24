@@ -5,7 +5,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from lots.filters import OrderedDistanceToPointFilter
+# from lots.filters import OrderedDistanceToPointFilter
 from lots.models import Lot
 from lots.serializers import LotsSerializer
 from users.models import User
@@ -24,7 +24,7 @@ class LotsViewSet(viewsets.ModelViewSet):
     """
     queryset = Lot.objects.all()
     serializer_class = LotsSerializer
-    OrderedDistanceToPointFilter()
+    # OrderedDistanceToPointFilter()
 
     # def filter_queryset(self, queryset):
     #     if self.request.data['order'] == 'price':

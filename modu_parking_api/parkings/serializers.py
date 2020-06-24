@@ -19,3 +19,11 @@ class ParkingSerializer(serializers.ModelSerializer):
         models = Parking
         fields = ('id', 'user', 'lot', 'total_fee', 'start_time', 'end_time', 'parking_time',
                   'current_stat', 'extension_rate', 'extension_time', 'original_rate')
+
+
+class ParkingListSerializer(serializers.ModelSerializer):
+    lot = serializers.StringRelatedField()
+
+    class Meta:
+        models = Parking
+        fields = ('id', 'total_fee', 'parking_time', 'lot')
