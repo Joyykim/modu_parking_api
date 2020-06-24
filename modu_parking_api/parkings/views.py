@@ -1,8 +1,9 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
-from rest_framework import status, request, serializers, viewsets, mixins
+from rest_framework import status, serializers, viewsets, mixins
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -11,32 +12,47 @@ from rest_framework.viewsets import GenericViewSet
 import parkings
 # from parkings import models, permissions
 from parkings import permissions
+from parkings.models import Parking
 from parkings.serializers import ParkingSerializer
 
 
-def post(self):
-    pass
-
 class ParkingViewSet(mixins.CreateModelMixin,
-                   mixins.RetrieveModelMixin,
-                   mixins.UpdateModelMixin,
-                   mixins.ListModelMixin,
-                   GenericViewSet):
-
-    queryset = parkings.objects.all()
+                     mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin,
+                     mixins.ListModelMixin,
+                     GenericViewSet):
+    queryset = Parking.objects.all()
     serializer = ParkingSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.CreateOwnTotalFee, IsAuthenticated)
 
-class ParkingSerializer(serializers.ModelSerializer):
-    total_fee_calc = serializers.SerializerMethodField
-    t = datetime.timedelta(minutes=60)
+    def get_permissions(self):
+        if self.action in ['partial_update', 'update', 'destroy', 'list', 'perform_create']:
+            permission_classes = [IsAuthenticated]
+        else:
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
-    class Meta:
-        model = parkings
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
+    def create(self, request, *args, **kwargs):
+        """주인의 사용내용만으로 주차 이벤트 생성, 과거 주차내역 list로 시간, 가격, 주차장 이름"""
+        """REQ - start_time, parking_time, lot(foreign)"""
+        """RES - total_fee, start_time, parking_time, lot(foreign), end_time(계산해야함)"""
+        start_time = request.data.get('start_time')
+        parking_time = request.data.get('parking_time')
+        lot = request.data.get('lot')
 
-    def get_total_fee_calc(self, obj, parking_time):
-        return (lot.basic + (lot.additionalRate * (parking_time - t)))
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def list(self):
+        """주차세부정보(총비용, 주차장 기본 정보)"""
+        """RES-total_fee, start_time, end_time, parking_time, lot(foreign)"""
+        """extension_rate, extension_time, original_rate(foreign key from lot)"""
+
+    @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
+    def partial_update(self, request, *args, **kwargs):
+        """주차시간을 추가(추가결제) total_Fee 계산할 자료 제공"""
+        """REQ - extension_time"""
+        """RES - extension_time, extension_rate, basic_rate, basic_time"""
 
         """ 
         input : parking time (2H), lot_id(2)
@@ -56,45 +72,4 @@ class ParkingSerializer(serializers.ModelSerializer):
         - serializer- method field를 이용해서 계산한, 값을 되돌려 준다. >> 굉장히 rest스러움 정석, >>> 어렵죠
                                                                 >> self.request 에서 꺼낼 수 있습니다. APIView
         """
-
-        # def get(self, request):
-        #     basic = request.data.get('basic')
-        #     additional = request.data.get('additionalRate')
-        #     t = datetime.timedelta(minutes=30)
-        #
-        #     if basic && additional is not None:
-        #         return (basic) + (additional * t)
-        #     return Response(serializer.data)
-        @action(detail=False, methods=['post'], permission_classes=[AllowAny])
-        def perform_create(self, serializer):
-            username = request.data.get('username')
-            password = request.data.get('password')
-            user = User.objects.get(username=username)
-            serializer = UserSerializer(user)
-            if user.check_password(password):
-                token, __ = Token.objects.get_or_create(user=user)
-                # __에는 bool이 저장
-                data = {
-                    "token": token.key,
-                    "user": serializer.data
-                }
-                return Response(data, status=status.HTTP_201_CREATED)
-
-        class UserSerializer(serializers.ModelSerializer):
-            full_name = serializers.SerializerMethodField()
-
-            def get_full_name(self, obj):
-                return obj.get_full_name().upper()
-
-            class Meta:
-                model = User
-                fields = ('email', 'first_name', 'last_name', 'full_name')
-
-        request.data('total_fee', 'start_time', 'parking_time')
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-        return super().create(request, *args, **kwargs)
+        pass
