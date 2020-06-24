@@ -13,7 +13,7 @@ import parkings
 # from parkings import models, permissions
 from parkings import permissions
 from parkings.models import Parking
-from parkings.serializers import ParkingSerializer
+from parkings.serializers import ParkingSerializer, ParkingListSerializer
 
 
 class ParkingViewSet(mixins.CreateModelMixin,
@@ -26,6 +26,13 @@ class ParkingViewSet(mixins.CreateModelMixin,
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.CreateOwnTotalFee, IsAuthenticated)
 
+    def get_serializer_class(self):
+        if self.action in "list":
+            serializer_class = ParkingListSerializer
+        else:
+            serializer_class = ParkingSerializer
+        return serializer_class
+
     def get_permissions(self):
         if self.action in ['partial_update', 'update', 'destroy', 'list', 'perform_create']:
             permission_classes = [IsAuthenticated]
@@ -33,7 +40,7 @@ class ParkingViewSet(mixins.CreateModelMixin,
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
-    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
+    # @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
     def create(self, request, *args, **kwargs):
         """
         주인의 사용내용만으로 주차 이벤트 생성, 과거 주차내역 list로 시간, 가격, 주차장 이름
@@ -49,15 +56,15 @@ class ParkingViewSet(mixins.CreateModelMixin,
         # total_fee = lot_ins.basic_rate
         pass
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
-    def list(self):
+    # @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def list(self, request, *args, **kwargs):
         """
         주차세부정보(총비용, 주차장 기본 정보)
-        RES-total_fee, start_time, end_time, parking_time, lot(foreign)
-        extension_rate, extension_time, original_rate(foreign key from lot)
+        RES- id, total_fee, parking_time, lot_name
         """
+        return super().list(request, *args, **kwargs)
 
-    @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
+    # @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
     def partial_update(self, request, *args, **kwargs):
         """
         주차시간을 추가(추가결제) total_Fee 계산할 자료 제공
