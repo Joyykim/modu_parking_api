@@ -76,26 +76,3 @@ def distance(origin, destination):
     d = radius * c
 
     return d
-
-
-def ds():
-    variable_for_lat = 0.0083  # 반경 0.5 키로
-    variable_for_lng = 0.009197  # 반경 0.5키로
-    # 키로당 단위로 받는다는거
-    request_lng = request.query_params.get('reqLat')
-    request_lat = request.query_params.get('reqLng')
-    request_lng = float(request_lng)
-    request_lat = float(request_lat)
-    distance = request.query_params.get('distance')
-    distance = float(distance)
-    boundary = {
-        "max_lat": request_lng + variable_for_lng * distance,
-        "min_lat": request_lng - variable_for_lng * distance,
-        "max_lng": request_lat + variable_for_lat * distance,
-        "min_lng": request_lat - variable_for_lat * distance,
-    }
-
-    post = PostRoom.objects.filter(lng__gte=boundary['min_lng'], lng__lte=boundary['max_lng']) \
-        .filter(lat__gte=boundary['min_lat'], lat__lte=boundary['max_lat'])
-    serializer = PostTinySerializer(post, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)

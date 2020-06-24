@@ -35,18 +35,28 @@ class ParkingViewSet(mixins.CreateModelMixin,
 
     @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
     def create(self, request, *args, **kwargs):
-        """주인의 사용내용만으로 주차 이벤트 생성, 과거 주차내역 list로 시간, 가격, 주차장 이름"""
-        """REQ - start_time, parking_time, lot(foreign)"""
-        """RES - total_fee, start_time, parking_time, lot(foreign), end_time(계산해야함)"""
-        start_time = request.data.get('start_time')
-        parking_time = request.data.get('parking_time')
-        lot = request.data.get('lot')
+        """
+        주인의 사용내용만으로 주차 이벤트 생성, 과거 주차내역 list로 시간, 가격, 주차장 이름
+        REQ - start_time, parking_time, lot(foreign)
+        RES - total_fee, start_time, parking_time, lot(foreign), end_time(계산해야함)
+        """
+        # start_time = request.data.get('start_time')
+        # parking_time = request.data.get('parking_time')
+        # lot_ins = request.data.get('lot')
+        #
+        #
+        #
+        # total_fee = lot_ins.basic_rate
+        pass
+
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def list(self):
-        """주차세부정보(총비용, 주차장 기본 정보)"""
-        """RES-total_fee, start_time, end_time, parking_time, lot(foreign)"""
-        """extension_rate, extension_time, original_rate(foreign key from lot)"""
+        """
+        주차세부정보(총비용, 주차장 기본 정보)
+        RES-total_fee, start_time, end_time, parking_time, lot(foreign)
+        extension_rate, extension_time, original_rate(foreign key from lot)
+        """
 
     @action(detail=False, methods=['patch'], permission_classes=[IsAuthenticated])
     def partial_update(self, request, *args, **kwargs):
