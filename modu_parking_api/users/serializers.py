@@ -13,7 +13,7 @@ class UserSerializer(ModelActionSerializer):
         model = User
         fields = ('id', 'email', 'username', 'password', 'phoneNum', 'plateNum', 'cardNum', 'points', 'created')
         action_fields = {
-            'login': {'fields': ('email', 'password', 'username'), 'read_only_fields': ('username',)},
+            'login': {'fields': ('email', 'password')},
             'update': {'fields': ('email', 'username')},
         }
 
