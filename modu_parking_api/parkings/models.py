@@ -1,5 +1,4 @@
 from django.db import models
-
 from lots.models import Lot
 from users.models import User
 
@@ -14,5 +13,3 @@ class Parking(models.Model):
     extension_time = models.DateTimeField()
     extension_rate = models.IntegerField()
     total_fee = models.IntegerField()
-
-
