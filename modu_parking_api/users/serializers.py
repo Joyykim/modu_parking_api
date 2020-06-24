@@ -1,6 +1,6 @@
-from action_serializer import ModelActionSerializer
 from .models import User
 from rest_framework import serializers
+from action_serializer import ModelActionSerializer
 
 
 class UserSerializer(ModelActionSerializer):

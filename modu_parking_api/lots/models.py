@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.gis.db import models as db_models
 
 
 class Lot(models.Model):
@@ -11,8 +10,22 @@ class Lot(models.Model):
     basic_rate = models.IntegerField(default=0)
     additional_rate = models.IntegerField(default=0)
     partnership = models.BooleanField(default=False)
-    time_weekdays = models.CharField(max_length=30)
-    time_weekends = models.CharField(max_length=30)
+    time_weekdays = models.CharField(max_length=30, null=True,)
+    time_weekends = models.CharField(max_length=30, null=True, )
     section_count = models.IntegerField(default=0)
 
-    distance = db_models.PointField(null=False, blank=False, srid=4326, verbose_name='distance')
+    # distance = db_models.PointField(null=False, blank=False, srid=4326, verbose_name='distance')
+
+    @staticmethod
+    def create_model():
+        for i in range(3):
+            Lot.objects.create(
+                name=f'성수 주차장 {i}번지',
+                address=f'성수동 {i}번지',
+                latitude=127.77,
+                longitude=352.123,
+                basic_rate=10000 + (i * 1000),
+                additional_rate=6000 + (i * 1000),
+                partnership=False,
+                section_count=i+1
+            )
