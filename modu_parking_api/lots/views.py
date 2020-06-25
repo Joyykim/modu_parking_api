@@ -21,7 +21,6 @@ class LotsViewSet(viewsets.ModelViewSet):
             return MapSerializer(*args, **kwargs)
         return super().get_serializer(*args, **kwargs)
 
-
     @action(detail=False)
     def map(self, request, *args, **kwargs):
         result = []
@@ -37,10 +36,34 @@ class LotsViewSet(viewsets.ModelViewSet):
 
 
 
-
-
     # @action(detail=False)
     # def price_odr(self, request, *args, **kwargs):
     #     serializer = self.get_serializer(self.queryset, many=True)
     #     return Response(serializer.data)
 
+    @action(detail=False)
+    def price_odr(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(self.queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False)
+    def distance_odr(self, request, *args, **kwargs):
+
+        user_location = (float(request.GET['latitude']), float(request.GET['longitude']))
+
+        serializer = self.get_serializer(self.queryset, many=True)
+
+        for lot in serializer.data:
+            lot.distance = get_distance(lot, user_location)
+
+        # sorting lots with distance
+        result = sorted(serializer.data, key=lambda obj: obj.distance)
+
+        return Response(result)
+
+
+def get_distance(lot, user_location):
+    lot_location = (lot.latitude, lot.longitude)
+    distance = haversine(lot_location, user_location)
+    return distance
