@@ -43,21 +43,20 @@ class LotsViewSet(viewsets.ModelViewSet):
 
     @action(detail=False)
     def distance_odr(self, request, *args, **kwargs):
-
         user_location = (float(request.GET['latitude']), float(request.GET['longitude']))
-
         serializer = self.get_serializer(self.queryset, many=True)
+        result = list(serializer.data)
 
-        for lot in serializer.data:
+        for lot in result:
             lot.distance = get_distance(lot, user_location)
 
         # sorting lots with distance
-        result = sorted(serializer.data, key=lambda obj: obj.distance)
+        result = sorted(result, key=lambda obj: obj.distance)
 
         return Response(result)
 
 
 def get_distance(lot, user_location):
-    lot_location = (lot.latitude, lot.longitude)
+    lot_location = (lot['latitude'], lot['longitude'])
     distance = haversine(lot_location, user_location)
     return distance

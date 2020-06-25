@@ -58,8 +58,8 @@ class LotsTestCase(APITestCase):
         # sorting lots with distance
         sorted_lots = sorted(response.data, key=lambda x: x['distance'])
         for res, lot in zip(response.data, sorted_lots):
-            self.assertEqual(res['id'], lot.id)
-            self.assertEqual(res['name'], lot.name)
+            self.assertEqual(res['id'], lot['id'])
+            self.assertEqual(res['name'], lot['name'])
         # self.assertEqual(response.data, sorted_lots)
 
     def test_price_odr_list(self):
