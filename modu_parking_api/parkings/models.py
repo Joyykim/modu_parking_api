@@ -7,4 +7,4 @@ class Parking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='parkings')
     lot = models.ForeignKey(Lot, on_delete=models.CASCADE)
     start_time = models.DateTimeField(auto_now_add=True)
-    parking_time = models.FloatField(default=0.0)
+    parking_time = models.FloatField(default=0)

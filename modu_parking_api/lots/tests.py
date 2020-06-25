@@ -93,6 +93,7 @@ class LotsListTestCase(APITestCase):
         user_location['zoom_lv'] = 2  # In order to retrieve lots within 2km
 
         response = self.client.get('/api/lots/map', data=user_location)
+        print(response.data)
         self.assertEqual(response.status_code, 200)
 
         for lot in response.data:

@@ -11,3 +11,6 @@ class Lot(models.Model):
     time_weekdays = models.CharField(max_length=30, null=True, )
     time_weekends = models.CharField(max_length=30, null=True, )
     section_count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
