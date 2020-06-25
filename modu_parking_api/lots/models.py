@@ -11,17 +11,3 @@ class Lot(models.Model):
     time_weekdays = models.CharField(max_length=30, null=True, )
     time_weekends = models.CharField(max_length=30, null=True, )
     section_count = models.IntegerField(default=0)
-
-    @staticmethod
-    def create_model():
-        for i in range(3):
-            Lot.objects.create(
-                name=f'성수 주차장 {i}번지',
-                address=f'성수동 {i}번지',
-                latitude=127.77,
-                longitude=352.123,
-                basic_rate=10000 + (i * 1000),
-                additional_rate=6000 + (i * 1000),
-                partnership=False,
-                section_count=i + 1
-            )
