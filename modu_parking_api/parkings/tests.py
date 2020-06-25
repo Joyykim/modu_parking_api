@@ -11,7 +11,7 @@ class ParkingCreateTestCase(APITestCase):
         self.lots = baker.make(Lot, _quantity=3)
         self.client.force_authenticate(user=self.user)
 
-    def test_link_create(self):
+    def test_parking_create(self):
         url = '/api/parkings'
         data = {
             "lot": self.lots[0].id,
