@@ -1,10 +1,7 @@
+
 import math
 
 from haversine import haversine
-from rest_framework import viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
-# from lots.filters import OrderedDistanceToPointFilter
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
