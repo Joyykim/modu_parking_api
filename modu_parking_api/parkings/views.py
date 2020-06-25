@@ -18,6 +18,9 @@ class ParkingViewSet(mixins.CreateModelMixin,
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.CreateOwnTotalFee, IsAuthenticated)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
     def get_serializer_class(self):
         if self.action in "list":
             serializer_class = ParkingListSerializer
@@ -36,14 +39,4 @@ class ParkingViewSet(mixins.CreateModelMixin,
 """
 POST /parkings/	
 : 주차 이벤트 생성(주인의 사용내역만)
-
-GET /parkings/
-: 유저의 주차 내역 목록(총비용, 주차장 정보)
-: 과거 주차내역 list으로 시간, 가격, 주차장이름 나열
-
-GET /parkings/id
-: 주차내역 상세
-
-PUT /parkings/id/
-: 주차시간을 추가(추가결제) total_fee 계산할 자료 제공
 """
