@@ -6,7 +6,7 @@ class LotsSerializer(serializers.ModelSerializer):
     """주차장 생성, 수정, 디테일 용 시리얼라이저"""
     class Meta:
         model = Lot
-        fields = ['name', 'address', 'phone_num', 'latitude', 'longitude', 'basic_rate', 'additional_rate',
+        fields = ['name', 'address', 'latitude', 'longitude', 'basic_rate', 'additional_rate',
                   'time_weekdays', 'time_weekends', 'section_count', ]
 
 
