@@ -13,11 +13,6 @@ from lots.serializers import LotsSerializer, OrderSerializer, MapSerializer
 
 
 class LotsViewSet(viewsets.ModelViewSet):
-    """
-    사용자에게 주차장들을 보여줌
-    1. order : 정렬해서 목록으로
-    2. map : 일정범위만큼 잘라서
-    """
     queryset = Lot.objects.all()
     serializer_class = LotsSerializer
 
@@ -28,27 +23,41 @@ class LotsViewSet(viewsets.ModelViewSet):
             return MapSerializer(*args, **kwargs)
         return super().get_serializer(*args, **kwargs)
 
-    # def list(self, request, *args, **kwargs):
-    #     return super().list(request, *args, **kwargs)
-
     @action(detail=False)
     def map(self, request, *args, **kwargs):
 
         result = []
         for lot in self.queryset:
-            data = request.data
-            if haversine((lot.latitude, lot.longitude), (data['latitude'], data['longitude'])) <= 2:
+            data = request.GET
+            if haversine((lot.latitude, lot.longitude), (float(data['latitude']), float(data['longitude']))) <= 2:
                 result.append(lot)
 
         serializer = self.get_serializer(result, many=True)
         return Response(serializer.data)
 
-    # @action(detail=False)
-    # def price_odr(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(self.queryset, many=True)
-    #     return Response(serializer.data)
+    @action(detail=False)
+    def price_odr(self, request, *args, **kwargs):
 
-    # @action(detail=False)
-    # def distance_odr(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(self.queryset, many=True)
-    #     return Response(serializer.data)
+        serializer = self.get_serializer(self.queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False)
+    def distance_odr(self, request, *args, **kwargs):
+
+        user_location = (float(request.GET['latitude']), float(request.GET['longitude']))
+
+        serializer = self.get_serializer(self.queryset, many=True)
+
+        for lot in serializer.data:
+            lot.distance = get_distance(lot, user_location)
+
+        # sorting lots with distance
+        result = sorted(serializer.data, key=lambda obj: obj.distance)
+
+        return Response(result)
+
+
+def get_distance(lot, user_location):
+    lot_location = (lot.latitude, lot.longitude)
+    distance = haversine(lot_location, user_location)
+    return distance

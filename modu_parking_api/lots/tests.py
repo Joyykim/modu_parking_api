@@ -4,6 +4,7 @@ from haversine import haversine
 
 
 class LotsTestCase(APITestCase):
+
     def setUp(self) -> None:
         self.lat = 37.5
         self.lng = 126.5
@@ -39,6 +40,7 @@ class LotsTestCase(APITestCase):
             self.assertLessEqual(distance, 2)  # distance between user and lot should be within 2km
 
     def test_distance_odr_list(self):
+
         response = self.client.get('/api/lots/distance_odr', data=self.user_data)
         self.assertEqual(response.status_code, 200)
 

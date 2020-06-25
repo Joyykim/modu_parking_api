@@ -19,11 +19,10 @@ class MapSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     """리스트 : 가격순, 거리순 정렬 시리얼라이저"""
+
     class Meta:
         model = Lot
-        fields = ['id', 'name', 'basic_rate', 'distance']
-
-
+        fields = ['id', 'name', 'basic_rate', ]  # 'distance'
 
 
 """
