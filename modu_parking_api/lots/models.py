@@ -14,8 +14,8 @@ class Lot(models.Model):
     time_weekends = models.CharField(max_length=30, null=True, )
     section_count = models.IntegerField(default=0)
 
-    def __str__(self):
-        return f'{self.name}'
+    # def __str__(self):
+    #     return f'{self.name}'
 
     # distance = db_models.PointField(null=False, blank=False, srid=4326, verbose_name='distance')
 
