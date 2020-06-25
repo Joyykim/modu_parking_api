@@ -58,8 +58,6 @@ class LotsTestCase(APITestCase):
             self.assertLessEqual(distance, 2)  # distance between user and lot should be within 2km
 
     def test_distance_odr_list(self):
-        """
-        """
         response = self.client.get('/api/lots/distance_odr', data=self.user_data)
         self.assertEqual(response.status_code, 200)
 
@@ -76,9 +74,6 @@ class LotsTestCase(APITestCase):
         #     self.assertEqual(res['name'], lot['name'])
 
     def test_price_odr_list(self):
-        """
-        TODO 데이터가 이미 가격 정렬이 되어있음. 섞어서 넣어준 후에 테스트 필요
-        """
         response = self.client.get('/api/lots/price_odr', data=self.user_data)
         self.assertEqual(response.status_code, 200)
 
@@ -96,10 +91,7 @@ class LotsTestCase(APITestCase):
 
 def add_distance(response, user_location):
     """
-
-    :param response:
-    :param user_location:
-    :return:
+    haversine으로 distance 계산해서 넣어준 리스트를 반환
     """
     for lot in response.data:
         lat = lot['latitude']
