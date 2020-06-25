@@ -9,21 +9,26 @@ from parkings.models import Parking
 
 
 class ParkingSerializer(serializers.ModelSerializer):
-    lot = LotsSerializer(many=True, read_only=True, source='lot_sets')
-    user = UserSerializer(many=True, read_only=True, source='user_sets')
-
-    # total_fee 계산 재료
-    original_rate = LotsSerializer  # lot에서 가져옴
+    """주차 생성, 수정, 삭제, 디테일 시리얼라이저"""
 
     class Meta:
         models = Parking
-        fields = ('id', 'user', 'lot', 'total_fee', 'start_time', 'end_time', 'parking_time',
-                  'current_stat', 'extension_rate', 'extension_time', 'original_rate')
+        fields = (
+            'id',
+            'lot',
+            'start_time',
+            'parking_time',
+        )
 
 
 class ParkingListSerializer(serializers.ModelSerializer):
+    """주차 리스트 시리얼라이저"""
     lot = serializers.StringRelatedField()
 
     class Meta:
         models = Parking
-        fields = ('id', 'total_fee', 'parking_time', 'lot')
+        fields = (
+            'id',
+            'lot',
+            'parking_time'
+        )
