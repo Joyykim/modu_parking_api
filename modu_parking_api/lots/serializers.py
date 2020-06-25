@@ -34,8 +34,10 @@ PUT /lots/id
 : 주차장 정보수정
 GET /lots/id
 : 주차장 세부정보
+
 GET /lots/map(action) 
 : 주차장 맵뷰역(예: 서울시)
+
 GET /lots/distance_odr(action) 
 : 주차장 목록 거리순 정렬
 GET /lots/price_odr(action) 

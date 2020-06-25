@@ -1,3 +1,4 @@
+from haversine import haversine
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -20,22 +21,17 @@ class LotsViewSet(viewsets.ModelViewSet):
             return MapSerializer(*args, **kwargs)
         return super().get_serializer(*args, **kwargs)
 
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
 
     @action(detail=False)
     def map(self, request, *args, **kwargs):
+        result = []
+        for lot in self.queryset:
+            data = request.GET
+            if haversine((lot.latitude, lot.longitude), (float(data['latitude']), float(data['longitude']))) <= 2:
+                result.append(lot)
 
-        serializer = self.get_serializer(self.queryset, many=True)
+        serializer = self.get_serializer(result, many=True)
         return Response(serializer.data)
-
-
-
-
-
-
-
-
 
 
 
@@ -47,7 +43,4 @@ class LotsViewSet(viewsets.ModelViewSet):
     # def price_odr(self, request, *args, **kwargs):
     #     serializer = self.get_serializer(self.queryset, many=True)
     #     return Response(serializer.data)
-    # @action(detail=False)
-    # def distance_odr(self, request, *args, **kwargs):
-    #     serializer = self.get_serializer(self.queryset, many=True)
-    #     return Response(serializer.data)
+

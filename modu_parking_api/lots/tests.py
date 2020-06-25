@@ -24,9 +24,10 @@ class LotsTestCase(APITestCase):
         user_location = {
             'latitude': self.lat,
             'longitude': self.lng,
-            'zoom_lv': 2                # In order to retrieve lots within 2km
+            'zoom_lv': 2  # In order to retrieve lots within 2km
         }
         response = self.client.get('/api/lots/map', data=user_location)
+        print(response.data)
         self.assertEqual(response.status_code, 200)
 
         user_location = (self.lat, self.lng)
