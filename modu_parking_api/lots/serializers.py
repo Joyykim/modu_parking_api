@@ -22,7 +22,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lot
-        fields = ['id', 'name', 'basic_rate', ]  # 'distance'
+        fields = ['id', 'name', 'basic_rate', 'latitude', 'longitude']  # 'distance'
 
 
 """
