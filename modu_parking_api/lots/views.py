@@ -1,11 +1,8 @@
-from django.contrib.gis.geos import Point
-from django.contrib.gis.measure import D
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-# from lots.filters import OrderedDistanceToPointFilter
 from lots.models import Lot
 from lots.serializers import LotsSerializer
 from users.models import User
