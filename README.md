@@ -17,7 +17,7 @@
 : 주차장 가격을 비교할 수 있도록 한다. 사용자들은 가까운 주차장중에서 가장 가격이 싼곳을 쉽게 찾을 수 있다.<br>
 : This feature provides an opportunity to compare prices. So, it’s easy for users to find the cheapest place nearby.<br>
 
-- 거리 비교 시스템 (Price Comparison)<br>
+- 거리 비교 시스템 (Distance Comparison)<br>
 : 주차장 거리를 비교할 수 있도록 한다. 사용자들은 자신의 위치에서 가장 가까운 주차장을 쉽게 찾을 수 있다.<br>
 : This feature provides an opportunity to compare distance between user and parking lot. So, it’s easy for users to find the nearest place.<br>
 
@@ -66,6 +66,9 @@ GET /bookmark/
 POST /bookmark/
 : 북마크 등록 
 
+DELETE /bookmark/id
+: 북마크 삭제
+
 - lots
 
 POST /lots/
@@ -78,7 +81,7 @@ GET /lots/id
 : 주차장 세부정보
 
 GET /lots/map(action) 
-: 주차장 맵뷰역(예: 서울시)
+: 주차장 맵뷰(예: 서울시)
 
 GET /lots/distance_odr
 : 주차장 목록 거리순 정렬
