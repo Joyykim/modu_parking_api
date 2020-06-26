@@ -7,9 +7,10 @@ from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.response import Response
 
+from parkings.permissions import IsOwner
 from .permissions import CustomUserPermission
-from users.serializers import UserSerializer
-from .models import User
+from users.serializers import UserSerializer, BookMarkSerializer
+from .models import User, BookMark
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -68,3 +69,17 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             return Response({"detail": "There are no bookmarks that has been saved."},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+class BookMarkViewSet(viewsets.ModelViewSet):
+    queryset = BookMark.objects.all()
+    serializer_class = BookMarkSerializer
+    permission_classes = (IsOwner,)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.queryset.filter(user=request.user)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

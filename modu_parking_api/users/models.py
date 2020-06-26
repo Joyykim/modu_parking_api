@@ -50,7 +50,6 @@ class User(AbstractUser):
     plateNum = models.CharField(default=None, blank=True, null=True, max_length=20)
     cardNum = models.IntegerField(default=None, blank=True, null=True)
     points = models.IntegerField(default=0)
-    # bookmark = models.ManyToManyField(Lot, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
     objects = UserManager()  # Replace the default model manager with custom UserManager
@@ -62,5 +61,7 @@ class User(AbstractUser):
 
 
 class BookMark(models.Model):
+    """주차장 즐겨찾기"""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     lot = models.ForeignKey(Lot, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)

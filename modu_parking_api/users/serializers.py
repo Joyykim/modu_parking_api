@@ -1,4 +1,4 @@
-from .models import User
+from .models import User, BookMark
 from rest_framework import serializers
 from action_serializer import ModelActionSerializer
 
@@ -23,3 +23,10 @@ class UserSerializer(ModelActionSerializer):
             user.set_password(validated_data['password'])
             user.save()
         return user
+
+
+class BookMarkSerializer(ModelActionSerializer):
+    class Meta:
+        model = BookMark
+        fields = ('id', 'lot', 'user')
+        read_only_fields = ('id',)
