@@ -19,16 +19,6 @@ class ParkingViewSet(mixins.CreateModelMixin,
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.CreateOwnTotalFee, IsAuthenticated)
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.parking_time += float(request.data['additional_time'])
-        instance.save()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
     def get_serializer_class(self):
         if self.action == "list":
             return ParkingListSerializer
@@ -41,10 +31,24 @@ class ParkingViewSet(mixins.CreateModelMixin,
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
     def list(self, request, *args, **kwargs):
         queryset = self.queryset.filter(user=request.user)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.parking_time += float(request.data['additional_time'])
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+
+
 
 
 """

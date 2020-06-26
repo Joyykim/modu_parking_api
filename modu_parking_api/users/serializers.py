@@ -14,7 +14,7 @@ class UserSerializer(ModelActionSerializer):
         fields = ('id', 'email', 'username', 'password', 'phoneNum', 'plateNum', 'cardNum', 'points', 'created')
         action_fields = {
             'login': {'fields': ('email', 'password')},
-            'update': {'fields': ('email', 'username')},
+            'update': {'fields': ('email', 'username', 'phoneNum')},
         }
 
     def create(self, validated_data):
