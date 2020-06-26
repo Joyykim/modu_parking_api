@@ -1,10 +1,5 @@
-from datetime import timedelta
-
 from rest_framework import serializers
-from django.contrib.auth.models import User
 from lots.serializers import LotsSerializer
-from users.serializers import UserSerializer
-import lots
 from parkings.models import Parking
 
 
