@@ -6,7 +6,7 @@
 
 ## features
 - GPS 트래킹 (GPS tracking)<br>
-: 사용자의 위치를 찾고 가까운 주차장까지의 위치를 보여줍니다.<br>
+: 사용자의 위치를 찾고 일정 범위 내의 주차장들의 위치를 보여줍니다.<br>
 : This technology allows to find the location of the car and determine the distance to the nearest parking lot.<br>
 
 - 예약 시스템 (Booking)<br>
