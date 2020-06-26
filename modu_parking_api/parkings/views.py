@@ -1,6 +1,7 @@
 from rest_framework import mixins
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from parkings import permissions
 from parkings.models import Parking
@@ -14,16 +15,21 @@ class ParkingViewSet(mixins.CreateModelMixin,
                      mixins.ListModelMixin,
                      GenericViewSet):
     queryset = Parking.objects.all()
-    serializer = ParkingSerializer
+    serializer_class = ParkingSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (permissions.CreateOwnTotalFee, IsAuthenticated)
 
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.parking_time += float(request.data['additional_time'])
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
     def get_serializer_class(self):
-        if self.action in "list":
-            serializer_class = ParkingListSerializer
-        else:
-            serializer_class = ParkingSerializer
-        return serializer_class
+        if self.action == "list":
+            return ParkingListSerializer
+        return super().get_serializer_class()
 
     def get_permissions(self):
         if self.action in ['partial_update', 'update', 'destroy', 'list', 'perform_create']:
@@ -31,6 +37,11 @@ class ParkingViewSet(mixins.CreateModelMixin,
         else:
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.queryset.filter(user=request.user)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 """
