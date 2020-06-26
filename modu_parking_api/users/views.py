@@ -1,11 +1,12 @@
 from django.contrib.auth import logout as django_logout, login, authenticate
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import viewsets, settings
+from rest_framework import viewsets, settings, mixins
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.viewsets import GenericViewSet
 
 from parkings.permissions import IsOwner
 from .permissions import CustomUserPermission
@@ -71,7 +72,10 @@ class UserViewSet(viewsets.ModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
 
-class BookMarkViewSet(viewsets.ModelViewSet):
+class BookMarkViewSet(mixins.CreateModelMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.ListModelMixin,
+                      GenericViewSet):
     queryset = BookMark.objects.all()
     serializer_class = BookMarkSerializer
     permission_classes = (IsOwner,)

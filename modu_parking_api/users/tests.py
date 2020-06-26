@@ -1,7 +1,9 @@
 from model_bakery import baker
 from rest_framework.test import APITestCase
 from rest_framework.authtoken.models import Token
-from .models import User
+
+from lots.models import Lot
+from .models import User, BookMark
 from munch import Munch
 
 email = "email@test.com"
@@ -120,9 +122,54 @@ class UserRetrieveUpdateTestCase(APITestCase):
         self.assertEqual(res.email, email)
 
     def test_user_update(self):
-        data = {"email": "update@test.com", "password": '1111'}
+        data = {
+            "phoneNum": "010-1234-5678",
+            "plateNum": "1243",
+            "cardNum": "3072-1730-7021-1331",
+            "username": "user22",
+        }
         response = self.client.put(self.url, data=data)
         self.assertEqual(200, response.status_code)
 
         res = Munch(response.data)
-        self.assertEqual(res.email, data['email'])
+        self.assertEqual(res.username, data['username'])
+        self.assertEqual(res.plateNum, data['plateNum'])
+        self.assertEqual(res.cardNum, data['cardNum'])
+
+
+class BookMarkTestCase(APITestCase):
+    def setUp(self) -> None:
+        lots = baker.make(Lot, _quantity=10)
+        users = baker.make(User, _quantity=10)
+        for user in users:
+            for lot in lots:
+                BookMark.objects.create(lot=lot, user=user)
+        self.user = users[0]
+        self.client.force_authenticate(user=self.user)
+        self.bookmark = BookMark.objects.first()
+        self.lots = Lot.objects.all()
+
+    def test_bookmark_create(self):
+        url = '/api/bookmarks'
+        data = {"lot": self.lots[0].id}
+
+        response = self.client.post(url, data=data)
+        self.assertEqual(201, response.status_code)
+
+        res = Munch(response.data)
+        self.assertTrue(res.id)
+        self.assertEqual(res.user, self.user.id)
+
+    def test_list(self):
+        response = self.client.get(f'/api/bookmarks')
+        self.assertEqual(response.status_code, 200)
+
+        for bookmark in list(response.data):
+            self.assertEqual(BookMark.objects.get(pk=bookmark['id']).user, self.user)
+
+    def test_retrieve(self):
+        """주차 상세 정보"""
+        response = self.client.get(f'/api/bookmarks/{self.bookmark.id}')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.bookmark.lot_id, response.data['lot'])
+        self.assertEqual(self.bookmark.user_id, response.data['user'])

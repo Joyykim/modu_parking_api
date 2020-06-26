@@ -46,9 +46,9 @@ class User(AbstractUser):
     """
     email = models.EmailField(max_length=100, unique=True, verbose_name='email')
     username = models.CharField(max_length=30, blank=True, null=True)
-    phoneNum = models.IntegerField(default=None, blank=True, null=True)
-    plateNum = models.CharField(default=None, blank=True, null=True, max_length=20)
-    cardNum = models.IntegerField(default=None, blank=True, null=True)
+    phoneNum = models.CharField(max_length=20, default=None, blank=True, null=True)
+    plateNum = models.CharField(max_length=20, default=None, blank=True, null=True)
+    cardNum = models.CharField(max_length=20, default=None, blank=True, null=True)
     points = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)
 

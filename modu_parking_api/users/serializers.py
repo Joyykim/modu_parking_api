@@ -14,7 +14,7 @@ class UserSerializer(ModelActionSerializer):
         fields = ('id', 'email', 'username', 'password', 'phoneNum', 'plateNum', 'cardNum', 'points', 'created')
         action_fields = {
             'login': {'fields': ('email', 'password')},
-            'update': {'fields': ('email', 'username')},
+            'update': {'fields': ('username', 'phoneNum', 'plateNum', 'cardNum',)},
         }
 
     def create(self, validated_data):
@@ -29,4 +29,4 @@ class BookMarkSerializer(ModelActionSerializer):
     class Meta:
         model = BookMark
         fields = ('id', 'lot', 'user')
-        read_only_fields = ('id',)
+        read_only_fields = ('id', 'user')
