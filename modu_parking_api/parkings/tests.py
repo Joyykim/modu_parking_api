@@ -8,11 +8,18 @@ from parkings.models import Parking
 from users.models import User
 
 
-class ParkingCreateTestCase(APITestCase):
+class ParkingsListTestCase(APITestCase):
+
     def setUp(self) -> None:
-        self.user = baker.make(User)
-        self.lots = baker.make(Lot, _quantity=3)
+        lots = baker.make(Lot, _quantity=10)
+        users = baker.make(User, _quantity=10)
+        for user in users:
+            for lot in lots:
+                Parking.objects.create(lot=lot, user=user, parking_time=randint(1, 5))
+        self.user = users[0]
         self.client.force_authenticate(user=self.user)
+        self.parking = Parking.objects.first()
+        self.lots = Lot.objects.all()
 
     def test_parking_create(self):
         url = '/api/parkings'
@@ -29,19 +36,6 @@ class ParkingCreateTestCase(APITestCase):
         self.assertEqual(res.parking_time, data['parking_time'])
         self.assertEqual(res.user, self.user.id)
 
-
-class ParkingsListTestCase(APITestCase):
-
-    def setUp(self) -> None:
-        lots = baker.make(Lot, _quantity=10)
-        users = baker.make(User, _quantity=10)
-        for user in users:
-            for lot in lots:
-                Parking.objects.create(lot=lot, user=user, parking_time=randint(1, 5))
-        self.user = users[0]
-        self.client.force_authenticate(user=self.user)
-        self.parking = Parking.objects.first()
-
     def test_list(self):
         response = self.client.get(f'/api/parkings')
         self.assertEqual(response.status_code, 200)
@@ -52,10 +46,20 @@ class ParkingsListTestCase(APITestCase):
 
     def test_update(self):
         prev_parking_time = self.parking.parking_time
-        data = {'additional_time': randint(1, 10) / 2}
+        random_additional_time = randint(1, 10) / 2
+        data = {
+            'additional_time': random_additional_time,
+        }
         response = self.client.put(f'/api/parkings/{self.parking.id}', data=data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # 수정 전 parking_time에 additional_time만큼 플러스가 되었는지 테스트
         self.assertEqual(data['additional_time'] + prev_parking_time, response.data['parking_time'])
+
+    def test_retrieve(self):
+        """주차 상세 정보"""
+        response = self.client.get(f'/api/parkings/{self.parking.id}')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.parking.lot_id, response.data['lot'])
+        self.assertEqual(self.parking.user_id, response.data['user'])

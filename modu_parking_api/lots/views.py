@@ -23,14 +23,12 @@ class LotsViewSet(viewsets.ModelViewSet):
         사용자의 위치를 기준으로 일정 범위의 주차장 목록 반환
         """
         result = []
-        # data = request.GET  # request.GET : 사용자 위도, 경도, 줌레벨
-        data = request.data  # request.GET : 사용자 위도, 경도, 줌레벨
+        data = request.GET  # request.GET : 사용자 위도, 경도, 줌레벨
 
         for lot in self.queryset:
             user_location = (float(data['latitude']), float(data['longitude']))
             lot_location = (lot.latitude, lot.longitude)
             distance = haversine(lot_location, user_location)
-            # distance = get_distance(lot, user_location)
 
             if distance <= float(data['zoom_lv']):
                 result.append(lot)
