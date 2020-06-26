@@ -3,10 +3,34 @@
 ## Introduction 
 - cloning modu parking api project 
 
-## apps
-- users
-- lots
-- parkings
+
+## features
+- GPS 트래킹 (GPS tracking)<br>
+: 사용자의 위치를 찾고 가까운 주차장까지의 위치를 보여줍니다.<br>
+: This technology allows to find the location of the car and determine the distance to the nearest parking lot.<br>
+
+- 예약 시스템 (Booking)<br>
+: 주차 공간을 예약할 수 있다. 사용자는 예산에 맞는 장소를 찾을 수 있으며, 충전된 포인트로 주차요금을 선지급한다. 주차시간 연장가능. <br>
+: This feature allows reserving a parking spot. The user can find a place that fits the budget and pre-pay it by points.<br>
+
+- 가격 비교 시스템 (Price Comparison)<br>
+: 주차장 가격을 비교할 수 있도록 한다. 사용자들은 가까운 주차장중에서 가장 가격이 싼곳을 쉽게 찾을 수 있다.<br>
+: This feature provides an opportunity to compare prices. So, it’s easy for users to find the cheapest place nearby.<br>
+
+- 거리 비교 시스템 (Price Comparison)<br>
+: 주차장 거리를 비교할 수 있도록 한다. 사용자들은 자신의 위치에서 가장 가까운 주차장을 쉽게 찾을 수 있다.<br>
+: This feature provides an opportunity to compare distance between user and parking lot. So, it’s easy for users to find the nearest place.<br>
+
+- 즐겨찾기 시스템 (Bookmark location)<br>
+: 즐겨찾을 주차장을 사용자의 즐겨찾기에 추가할 수 있는 기능 <br>
+: This feature allows users to save the place on their bookmark. <br>
+
+
+## models
+- User (사용자)
+- Lot (주차장)
+- Parking (주차 이벤트)
+- BookMark (즐겨찾기)
 
 ## requirments
 Project is created with:
@@ -79,29 +103,6 @@ GET  /parkings/id
 
 PUT  /parkings/id/
 : 주차시간을 추가(추가결제)
-
-
-## features
-- GPS 트래킹 (GPS tracking)<br>
-: 사용자의 위치를 찾고 가까운 주차장까지의 위치를 보여줍니다.<br>
-: This technology allows to find the location of the car and determine the distance to the nearest parking lot.<br>
-
-- 예약 시스템 (Booking)<br>
-: 주차 공간을 예약할 수 있다. 사용자는 예산에 맞는 장소를 찾을 수 있으며, 충전된 포인트로 주차요금을 선지급한다. 주차시간 연장가능. <br>
-: This feature allows reserving a parking spot. The user can find a place that fits the budget and pre-pay it by points.<br>
-
-- 가격 비교 시스템 (Price Comparison)<br>
-: 주차장 가격을 비교할 수 있도록 한다. 사용자들은 가까운 주차장중에서 가장 가격이 싼곳을 쉽게 찾을 수 있다.<br>
-: This feature provides an opportunity to compare prices. So, it’s easy for users to find the cheapest place nearby.<br>
-
-- 거리 비교 시스템 (Price Comparison)<br>
-: 주차장 거리를 비교할 수 있도록 한다. 사용자들은 자신의 위치에서 가장 가까운 주차장을 쉽게 찾을 수 있다.<br>
-: This feature provides an opportunity to compare distance between user and parking lot. So, it’s easy for users to find the nearest place.<br>
-
-- 즐겨찾기 시스템 (Bookmark location)<br>
-: 즐겨찾을 주차장을 사용자의 즐겨찾기에 추가할 수 있는 기능 <br>
-: This feature allows users to save the place on their bookmark. <br>
-
 
 
 ## contributors
