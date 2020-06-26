@@ -1,3 +1,4 @@
+from model_bakery import baker
 from rest_framework.test import APITestCase
 from rest_framework.authtoken.models import Token
 from .models import User
@@ -73,12 +74,14 @@ class UserLogoutTestCase(APITestCase):
         self.user.set_password(password)
         self.user.save()
         # Get token by login
-        self.client.post('/api/users/login', {"email": email, "password": password})
+        baker.make(Token, user=self.user)
+        token = Token.objects.get(user_id=self.user.id)
+        self.client.force_authenticate(user=self.user, token=token)
 
     def test_is_token_deleted(self):
         response = self.client.delete(self.url)
         self.assertEqual(200, response.status_code)
-        self.assertFalse(Token.objects.filter(user_id=self.user.id))
+        self.assertFalse(Token.objects.filter(user_id=self.user.id).exists())
 
 
 class UserDeactivateTestCase(APITestCase):
