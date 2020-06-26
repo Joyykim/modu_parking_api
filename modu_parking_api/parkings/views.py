@@ -48,6 +48,11 @@ class ParkingViewSet(mixins.CreateModelMixin,
         return super().create(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
+        """
+        GET /parkings/
+        : 유저의 주차 내역 목록(총비용, 주차장 정보)
+        : 과거 주차내역 list으로 시간, 가격, 주차장이름 나열
+        """
         queryset = self.queryset.filter(user=request.user)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
@@ -74,17 +79,3 @@ class ParkingViewSet(mixins.CreateModelMixin,
         instance.save()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
-
-
-"""
-
-GET /parkings/
-: 유저의 주차 내역 목록(총비용, 주차장 정보)
-: 과거 주차내역 list으로 시간, 가격, 주차장이름 나열
-
-GET /parkings/id
-: 주차내역 상세
-
-PUT /parkings/id/
-: 주차시간을 추가(추가결제) total_fee 계산할 자료 제공
-"""

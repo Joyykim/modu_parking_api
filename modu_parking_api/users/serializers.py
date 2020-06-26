@@ -1,6 +1,7 @@
-from .models import User, BookMark
-from rest_framework import serializers
 from action_serializer import ModelActionSerializer
+from rest_framework import serializers
+
+from .models import User, BookMark
 
 
 class UserSerializer(ModelActionSerializer):
