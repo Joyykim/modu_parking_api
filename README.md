@@ -67,12 +67,16 @@ DELETE /lots/id
 
 
 - parkings
+
 POST /parkings/ 
 : 주차 이벤트 생성(주인의 사용내역만)
+
 GET  /parkings/
 : 유저의 주차 내역 목록(총비용, 주차장 정보)
+
 GET  /parkings/id
 : 주차세부정보 (총비용, 주차장 정보) 
+
 PUT  /parkings/id/
 : 주차시간을 추가(추가결제)
 
