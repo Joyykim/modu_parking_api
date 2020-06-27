@@ -146,7 +146,7 @@ class BookMarkTestCase(APITestCase):
                 BookMark.objects.create(lot=lot, user=user)
         self.user = users[0]
         self.client.force_authenticate(user=self.user)
-        self.bookmark = BookMark.objects.first()
+        self.bookmark = BookMark.objects.filter(user=self.user).first()
         self.lots = Lot.objects.all()
 
     def test_bookmark_create(self):
@@ -160,16 +160,9 @@ class BookMarkTestCase(APITestCase):
         self.assertTrue(res.id)
         self.assertEqual(res.user, self.user.id)
 
-    def test_list(self):
+    def test_bookmark_list(self):
         response = self.client.get(f'/api/bookmarks')
         self.assertEqual(response.status_code, 200)
 
         for bookmark in list(response.data):
             self.assertEqual(BookMark.objects.get(pk=bookmark['id']).user, self.user)
-
-    def test_retrieve(self):
-        """주차 상세 정보"""
-        response = self.client.get(f'/api/bookmarks/{self.bookmark.id}')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(self.bookmark.lot_id, response.data['lot'])
-        self.assertEqual(self.bookmark.user_id, response.data['user'])

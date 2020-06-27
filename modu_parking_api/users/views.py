@@ -56,26 +56,12 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response({"detail": "Account successfully deleted."},
                         status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=['get'])
-    def bookmark(self, request):
-        try:
-            user = self.get_object()
-        except (AttributeError, ObjectDoesNotExist):
-            return Response({"detail": "Not authorized User."},
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        if user.bookmark.all().exists():
-            bookmarks = user.bookmark.all()
-            return Response(bookmarks)
-        else:
-            return Response({"detail": "There are no bookmarks that has been saved."},
-                            status=status.HTTP_400_BAD_REQUEST)
-
 
 class BookMarkViewSet(mixins.CreateModelMixin,
-                      mixins.RetrieveModelMixin,
                       mixins.ListModelMixin,
+                      mixins.DestroyModelMixin,
                       GenericViewSet):
+    """사용자의 즐겨찾기 생성, 목록, 삭제만"""
     queryset = BookMark.objects.all()
     serializer_class = BookMarkSerializer
     permission_classes = (IsOwner,)
