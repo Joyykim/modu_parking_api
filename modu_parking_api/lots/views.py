@@ -17,6 +17,21 @@ class LotsViewSet(viewsets.ModelViewSet):
             return MapSerializer
         return super().get_serializer_class()
 
+    def get_queryset(self):
+        if self.action == 'map':
+            lat = float(data['latitude'])
+            lon = float(data['longtitude'])
+            min_lat = lat - 0.0000001
+            max_lat = lat + 0.0000001
+
+            # 모든 data를 확인 하지않고 filter 사용으로 쿼리 줄이기
+            qs = self.queryset.filter(latitude__gte=min_lat, latitude__lte=max_lat)
+
+            return qs
+
+        return super().get_queryset()
+
+
     @action(detail=False)
     def map(self, request, *args, **kwargs):
         """
@@ -24,6 +39,15 @@ class LotsViewSet(viewsets.ModelViewSet):
         """
         result = []
         data = request.GET  # request.GET : 사용자 위도, 경도, 줌레벨
+
+        lat = float(data['latitude'])
+        lon = float(data['longtitude'])
+        min_lat = lat - 0.0000001
+        max_lat = lat + 0.0000001
+
+        # 모든 data를 확인 하지않고 filter 사용으로 쿼리 줄이기
+        # get_queryst() override 해서 사용
+        self.queryset.filter(latitude__gte=min_lat, latitude__lte=max_lat)
 
         for lot in self.queryset:
             user_location = (float(data['latitude']), float(data['longitude']))
@@ -36,6 +60,10 @@ class LotsViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(result, many=True)
         return Response(serializer.data)
 
+    #  drf filterset 사용하면 ordering 구현 불필요
+    # https://www.django-rest-framework.org/api-guide/filtering/#orderingfilter
+    # static 정보라서 ttl=60m 정도 설정하는게 좋음
+    # 클라이언트에서 정렬 가능 하므로 API 필요 없어 보
     @action(detail=False)
     def price_odr(self, request, *args, **kwargs):
         """
@@ -44,7 +72,7 @@ class LotsViewSet(viewsets.ModelViewSet):
         user_location = (float(request.GET['latitude']), float(request.GET['longitude']))
 
         # 가격 정렬
-        ordered_queryset = self.queryset.order_by('basic_rate')
+        ordered_queryset = self.queryset.order_by('basic_rate')임
         serializer = self.get_serializer(ordered_queryset, many=True)
 
         unfiltered_lots = list(serializer.data)  # ReturnList -> list 형변환
@@ -71,6 +99,7 @@ class LotsViewSet(viewsets.ModelViewSet):
         return Response(result)
 
 
+# lot.filter_by_distance() 추출 추천
 def filter_by_distance(unfiltered_lots, user_location):
     filtered_lots = []
 

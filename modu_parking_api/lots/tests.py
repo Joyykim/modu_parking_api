@@ -69,7 +69,7 @@ class LotsListTestCase(APITestCase):
         rate_max = 50
 
         # create lots with random location and basic_rate
-        for i in range(500):
+        for i in range(2):
             rate = randint(rate_min, rate_max) * 1000  # return integer
             lat = uniform(lat_min, lat_max)  # return float
             lng = uniform(lng_min, lng_max)
