@@ -44,9 +44,7 @@ class User(AbstractUser):
     Use an email address as the primary user identifier instead of a username for authentication
     """
     email = models.EmailField(max_length=100, unique=True, verbose_name='email')
-    # 자주사용 하는 모델 필드는 Abstract Model 추출
-    # https://docs.djangoproject.com/en/3.0/topics/db/models/#abstract-base-classes
-
+    created = models.DateTimeField(auto_now_add=True)
     objects = UserManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
