@@ -29,7 +29,7 @@ class ParkingsListTestCase(APITestCase):
         }
 
         response = self.client.post(url, data=data)
-        self.assertEqual(201, response.status_code)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         res = Munch(response.data)
         self.assertTrue(res.id)
@@ -44,16 +44,14 @@ class ParkingsListTestCase(APITestCase):
             # 응답으로 온 parking들이 유저의 parking이 맞는지 테스트
             self.assertEqual(Parking.objects.get(pk=parking['id']).user, self.user)
 
-    def test_update(self):
+    def test_should_update_additional_time(self):
         prev_parking_time = self.parking.parking_time
         random_additional_time = randint(1, 10) / 2
-        data = {
-            'additional_time': random_additional_time,
-        }
+        data = {'additional_time': random_additional_time}
         response = self.client.put(f'/api/parkings/{self.parking.id}', data=data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
+        print(response.data)
         # 수정 전 parking_time에 additional_time만큼 플러스가 되었는지 테스트
         self.assertEqual(data['additional_time'] + prev_parking_time, response.data['parking_time'])
 

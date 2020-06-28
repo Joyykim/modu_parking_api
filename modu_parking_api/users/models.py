@@ -1,7 +1,6 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from lots.models import Lot
 
 
 class UserManager(BaseUserManager):
@@ -45,29 +44,29 @@ class User(AbstractUser):
     Use an email address as the primary user identifier instead of a username for authentication
     """
     email = models.EmailField(max_length=100, unique=True, verbose_name='email')
-    # null vs default=''
-    username = models.CharField(max_length=30, blank=True, default='')
-    # camel -> snake
-    # 부가 적인 정보는 profile OneToOne 모델로 추출
-    # https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#extending-the-existing-user-models
-    phoneNum = models.CharField(max_length=20, default=None, blank=True, null=True)
-    plateNum = models.CharField(max_length=20, default=None, blank=True, null=True)
-    cardNum = models.CharField(max_length=20, default=None, blank=True, null=True)
-    points = models.IntegerField(default=0)
     # 자주사용 하는 모델 필드는 Abstract Model 추출
     # https://docs.djangoproject.com/en/3.0/topics/db/models/#abstract-base-classes
-    created = models.DateTimeField(auto_now_add=True)
 
-    objects = UserManager()  # Replace the default model manager with custom UserManager
-    USERNAME_FIELD = 'email'  # Set the USERNAME_FIELD (which defines the unique identifier for the User model) to email
+    objects = UserManager()
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
 
 
+# 부가 적인 정보는 profile OneToOne 모델로 추출
+# https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#extending-the-existing-user-models
+class Profile(models.Model):
+    phone_num = models.CharField(max_length=20, default=None, blank=True, null=True)
+    plate_num = models.CharField(max_length=20, default=None, blank=True, null=True)
+    card_num = models.CharField(max_length=20, default=None, blank=True, null=True)
+    points = models.IntegerField(default=0)
+    user = models.OneToOneField('users.User', on_delete=models.CASCADE)
+
+
 class BookMark(models.Model):
     """주차장 즐겨찾기"""
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    lot = models.ForeignKey(Lot, on_delete=models.CASCADE)
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='bookmarks')
+    lot = models.ForeignKey('lots.Lot', on_delete=models.CASCADE, related_name='bookmarks')
     created = models.DateTimeField(auto_now_add=True)

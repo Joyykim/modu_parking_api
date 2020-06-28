@@ -15,33 +15,3 @@ class MapSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lot
         fields = ['id', 'latitude', 'longitude', 'basic_rate', ]
-
-
-class OrderSerializer(serializers.ModelSerializer):
-    """리스트 : 가격순, 거리순 정렬 시리얼라이저"""
-
-    class Meta:
-        model = Lot
-        fields = ['id', 'name', 'basic_rate', 'latitude', 'longitude']  # 'distance'
-
-
-"""
-lots app
-POST /lots/
-: 주차장 등록
-PUT /lots/id
-: 주차장 정보수정
-GET /lots/id
-: 주차장 세부정보
-
-GET /lots/map(action) 
-: 주차장 맵뷰역(예: 서울시)
-
-GET /lots/distance_odr(action) 
-: 주차장 목록 거리순 정렬
-GET /lots/price_odr(action) 
-: 주차장 목록 가격순 정렬
-DELETE /lots/id 
-: 주차장 삭제
-"""
-

@@ -21,11 +21,13 @@ class LotsTestCase(APITestCase):
             "additional_rate": 6000,
             "partnership": False,
             "section_count": 1,
+            "time_weekdays": '12:00 ~ 22:00',
+            "time_weekends": '12:00 ~ 22:00',
         }
         response = self.client.post('/api/lots', data=data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(response.data.get('name'))
         self.assertEqual(response.data.get('latitude'), data["latitude"])
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_retrieve(self):
         # 권한을 주지 않아서 아직 사용하지 않습니다. 하게 된다면 유저를 생성하고, 사용하시면 됩니다.
@@ -69,29 +71,21 @@ class LotsListTestCase(APITestCase):
         rate_max = 50
 
         # create lots with random location and basic_rate
-        for i in range(2):
+        for i in range(500):
             rate = randint(rate_min, rate_max) * 1000  # return integer
             lat = uniform(lat_min, lat_max)  # return float
             lng = uniform(lng_min, lng_max)
-            Lot.objects.create(latitude=lat, longitude=lng, name=f'{i}lot', basic_rate=rate)
+            Lot.objects.create(address=f'성수동{i}', latitude=lat, longitude=lng, name=f'{i}lot', basic_rate=rate,
+                               additional_rate=rate // 2, time_weekdays='12:00 ~ 22:00', time_weekends='12:00 ~ 22:00',
+                               section_count=i % 20, )
 
         # user coordinate
         self.lat = uniform(lat_min, lat_max)
         self.lng = uniform(lng_min, lng_max)
 
-        # data for request body
-        self.request_user_location = {
-            'latitude': self.lat,
-            'longitude': self.lng,
-        }
-
-        # data for haversine method
-        self.tuple_user_location = (self.lat, self.lng)
-
     def test_map_list(self):
-        user_location = copy.copy(self.request_user_location)
-        user_location['zoom_lv'] = 2  # In order to retrieve lots within 2km
-
+        # data for request body
+        user_location = {'lat': self.lat, 'lon': self.lng, 'radius': 2}
         response = self.client.get('/api/lots/map', data=user_location)
         self.assertEqual(response.status_code, 200)
 
@@ -101,50 +95,5 @@ class LotsListTestCase(APITestCase):
             lot_location = (lat, lng)
 
             # distance between user and lot should be within 2km
-            distance = haversine(lot_location, self.tuple_user_location)
-            self.assertLessEqual(distance, user_location['zoom_lv'])
-
-    def test_distance_odr_list(self):
-        response = self.client.get('/api/lots/distance_odr', data=self.request_user_location)
-        self.assertEqual(response.status_code, 200)
-
-        # check if the response shows lots in distance order
-        add_distance(response, self.tuple_user_location)
-
-        # sorting lots with distance
-        sorted_lots = sorted(response.data, key=lambda x: x['distance'])
-        self.assertEqual(response.data, sorted_lots)
-
-        # for res, lot in zip(response.data, sorted_lots):
-        #     self.assertLessEqual(res['distance'], 1)  # distance between user and lot should be within 1km
-        #     self.assertEqual(res['id'], lot['id'])
-        #     self.assertEqual(res['name'], lot['name'])
-
-    def test_price_odr_list(self):
-        response = self.client.get('/api/lots/price_odr', data=self.request_user_location)
-        self.assertEqual(response.status_code, 200)
-
-        # sorting lots with price
-        sorted_lots = sorted(response.data, key=lambda x: x['basic_rate'])
-        self.assertEqual(response.data, sorted_lots)
-
-        add_distance(response, self.tuple_user_location)
-
-        # for res, lot in zip(response.data, sorted_lots):
-        #     self.assertLessEqual(res['distance'], 1)  # distance between user and lot should be within 1km
-        #     self.assertEqual(res['id'], lot['id'])
-        #     self.assertEqual(res['name'], lot['name'])
-
-
-def add_distance(response, user_location):
-    """
-    response.data -> haversine으로 distance 계산해서 넣어준 리스트를 반환
-    """
-    for lot in response.data:
-        lat = lot['latitude']
-        lng = lot['longitude']
-        lot_location = (lat, lng)
-
-        distance = haversine(lot_location, user_location)
-
-        lot['distance'] = distance
+            distance = haversine(lot_location, (self.lat, self.lng))
+            self.assertLessEqual(distance, user_location['radius'])

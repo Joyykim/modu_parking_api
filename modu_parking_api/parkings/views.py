@@ -1,4 +1,4 @@
-from rest_framework import mixins
+from rest_framework import mixins, status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -39,7 +39,7 @@ class ParkingViewSet(mixins.CreateModelMixin,
 
         # 포인트 부족시 거부
         if request.user.points < total_fee:
-            return Response({'refuse': '보유한 포인트가 부족합니다'})
+            return Response({'refuse': '보유한 포인트가 부족합니다'}, status=status.HTTP_400_BAD_REQUEST)
 
         # 사용자 포인트 차감
         request.user.points -= total_fee
@@ -49,8 +49,7 @@ class ParkingViewSet(mixins.CreateModelMixin,
     def list(self, request, *args, **kwargs):
         """
         GET /parkings/
-        : 유저의 주차 내역 목록(총비용, 주차장 정보)
-        : 과거 주차내역 list으로 시간, 가격, 주차장이름 나열
+        유저의 주차 내역 목록(시간, 가격, 주차장이름, 주차장 id)
         """
         queryset = self.queryset.filter(user=request.user)
         serializer = self.get_serializer(queryset, many=True)
@@ -68,7 +67,7 @@ class ParkingViewSet(mixins.CreateModelMixin,
 
         # 포인트 부족시 거부
         if request.user.points < additional_rate:
-            return Response({'refuse': '보유한 포인트가 부족합니다'})
+            return Response({'refuse': '보유한 포인트가 부족합니다'}, status=status.HTTP_400_BAD_REQUEST)
 
         # 주차시간 연장, 사용자 포인트 차감
         instance.parking_time += additional_time
