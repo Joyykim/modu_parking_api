@@ -98,8 +98,8 @@ class UserDeactivateTestCase(APITestCase):
     def test_user_deleted(self):
         response = self.client.delete(self.url)
         self.assertEqual(204, response.status_code)
-        self.assertFalse(User.objects.filter(id=self.user.id))
-        self.assertFalse(Token.objects.filter(user_id=self.user.id))
+        self.assertFalse(User.objects.filter(id=self.user.id).exists())
+        self.assertFalse(Token.objects.filter(user_id=self.user.id).exists())
 
 
 class UserRetrieveUpdateTestCase(APITestCase):
@@ -140,7 +140,7 @@ class UserRetrieveUpdateTestCase(APITestCase):
 class BookMarkTestCase(APITestCase):
     def setUp(self) -> None:
         lots = baker.make(Lot, _quantity=10)
-        users = baker.make(User, _quantity=10)
+        users = baker.make(User, _quantity=3)
         for user in users:
             for lot in lots:
                 BookMark.objects.create(lot=lot, user=user)

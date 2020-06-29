@@ -50,6 +50,7 @@ class User(AbstractUser):
     # camel -> snake
     # 부가 적인 정보는 profile OneToOne 모델로 추출
     # https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#extending-the-existing-user-models
+    # 개인정보 암호화 필수 인데 복호화 가능 하게 할지 불가능 하게 할지 서비스 기능에 따라서 결정
     phoneNum = models.CharField(max_length=20, default=None, blank=True, null=True)
     plateNum = models.CharField(max_length=20, default=None, blank=True, null=True)
     cardNum = models.CharField(max_length=20, default=None, blank=True, null=True)

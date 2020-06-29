@@ -26,6 +26,7 @@ class ParkingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Parking
+        # list vs tuple
         fields = (
             'id',
             'lot',
@@ -35,9 +36,22 @@ class ParkingSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ('id', 'start_time', 'user')
 
+    def _validate(self, attrs):
+        lot = Lot.objects.get(id=attrs['lot'])
+        parking_time = attrs['parking_time']
+        additional_rate = ((parking_time - 1) * 2) * lot.additional_rate  # 추가비용
+        total_fee = (lot.basic_rate + additional_rate)  # 총비용
+
+        # 포인트 부족시 거부
+        if self.context['request'].user.points < total_fee:
+            raise serializers.ValidationError({'refuse': '보유한 포인트가 부족합니다'})
+
+        return attrs
+
 
 class ParkingUpdateSerializer(serializers.ModelSerializer):
     """주차 수정 시리얼라이저"""
+    # singular vs plural
     lot = LotsSerializer()
 
     class Meta:

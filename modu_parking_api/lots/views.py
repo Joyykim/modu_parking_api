@@ -18,6 +18,9 @@ class LotsViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
 
     def get_queryset(self):
+        # filterset 구성 하면 queryset override 불필요
+        # https://www.django-rest-framework.org/api-guide/filtering/#filtering-and-object-lookups
+        # endpoint?min_lat=xxx&max_lat=xxx&lon=yyy
         if self.action == 'map':
             lat = float(data['latitude'])
             lon = float(data['longtitude'])
@@ -41,13 +44,13 @@ class LotsViewSet(viewsets.ModelViewSet):
         data = request.GET  # request.GET : 사용자 위도, 경도, 줌레벨
 
         lat = float(data['latitude'])
-        lon = float(data['longtitude'])
+        lon = float(data['longitude'])
         min_lat = lat - 0.0000001
         max_lat = lat + 0.0000001
 
         # 모든 data를 확인 하지않고 filter 사용으로 쿼리 줄이기
         # get_queryst() override 해서 사용
-        self.queryset.filter(latitude__gte=min_lat, latitude__lte=max_lat)
+        # self.queryset.filter(latitude__gte=min_lat, latitude__lte=max_lat)
 
         for lot in self.queryset:
             user_location = (float(data['latitude']), float(data['longitude']))
@@ -72,7 +75,7 @@ class LotsViewSet(viewsets.ModelViewSet):
         user_location = (float(request.GET['latitude']), float(request.GET['longitude']))
 
         # 가격 정렬
-        ordered_queryset = self.queryset.order_by('basic_rate')임
+        ordered_queryset = self.queryset.order_by('basic_rate')
         serializer = self.get_serializer(ordered_queryset, many=True)
 
         unfiltered_lots = list(serializer.data)  # ReturnList -> list 형변환

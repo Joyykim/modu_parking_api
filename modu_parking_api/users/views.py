@@ -5,6 +5,7 @@ from rest_framework import viewsets, settings, mixins
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework import status
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -28,6 +29,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user = authenticate(email=email, password=password)
         if user is not None:
             token, created = Token.objects.get_or_create(user=user)
+            # 필요한지 확인
             login(request, user)
             return Response({'token': token.key, 'email': user.email}, status=status.HTTP_200_OK)
         else:
@@ -40,6 +42,7 @@ class UserViewSet(viewsets.ModelViewSet):
         except (AttributeError, ObjectDoesNotExist):
             return Response({"detail": "Not authorized User."},
                             status=status.HTTP_400_BAD_REQUEST)
+        # 필요한지 확인
         if getattr(settings, 'REST_SESSION_LOGIN', True):
             django_logout(request)
             return Response({"detail": "Successfully logged out."},
@@ -47,7 +50,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['delete'])
     def deactivate(self, request, *args, **kwargs):
+        # get_object_or_404() 활용
+        # https://www.django-rest-framework.org/api-guide/generic-views/#get_objectself
+        # user = get_object_or_404(User.objects.all(), id=request.user.id)
+
         try:
+            # request.user.delete()
+            # 필요한지 확인
             user = self.get_object()
             user.delete()
         except (AttributeError, ObjectDoesNotExist):

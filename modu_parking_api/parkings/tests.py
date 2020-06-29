@@ -12,7 +12,7 @@ class ParkingsListTestCase(APITestCase):
 
     def setUp(self) -> None:
         lots = baker.make(Lot, _quantity=10)
-        users = baker.make(User, _quantity=10)
+        users = baker.make(User, _quantity=3)
         for user in users:
             for lot in lots:
                 Parking.objects.create(lot=lot, user=user, parking_time=randint(1, 5))
@@ -40,6 +40,7 @@ class ParkingsListTestCase(APITestCase):
         response = self.client.get(f'/api/parkings')
         self.assertEqual(response.status_code, 200)
 
+        # for parking in response.data:
         for parking in list(response.data):
             # 응답으로 온 parking들이 유저의 parking이 맞는지 테스트
             self.assertEqual(Parking.objects.get(pk=parking['id']).user, self.user)

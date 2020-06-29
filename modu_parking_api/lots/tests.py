@@ -23,7 +23,10 @@ class LotsTestCase(APITestCase):
             "section_count": 1,
         }
         response = self.client.post('/api/lots', data=data)
+        # assert 구체화 필요
+        self.assertEqual(response.data.get('name'), data.get('name'))
         self.assertTrue(response.data.get('name'))
+
         self.assertEqual(response.data.get('latitude'), data["latitude"])
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -69,7 +72,7 @@ class LotsListTestCase(APITestCase):
         rate_max = 50
 
         # create lots with random location and basic_rate
-        for i in range(2):
+        for i in range(500):
             rate = randint(rate_min, rate_max) * 1000  # return integer
             lat = uniform(lat_min, lat_max)  # return float
             lng = uniform(lng_min, lng_max)

@@ -12,3 +12,16 @@ class Parking(models.Model):
     # DurationField 사용 https://docs.djangoproject.com/en/3.0/ref/models/fields/#durationfield
     # default 사용 확인
     parking_time = models.FloatField(default=0.0)
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        is_created = self.id is None
+
+        parking = super().save(force_insert=False, force_update=False, using=None,
+             update_fields=None)
+
+        if is_created:
+            # self.user...
+            pass
+
+        return parking

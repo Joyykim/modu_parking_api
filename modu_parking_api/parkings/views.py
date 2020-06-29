@@ -42,6 +42,12 @@ class ParkingViewSet(mixins.CreateModelMixin,
         if request.user.points < total_fee:
             return Response({'refuse': '보유한 포인트가 부족합니다'})
 
+        # 포인트 차감/충전 동시에 진행 하면 race condition 발생 가능
+        # 해결: lock/F function/Update
+        # https://docs.djangoproject.com/en/3.0/ref/models/expressions/#f-expressions
+        # https: // docs.djangoproject.com / en / 3.0 / ref / models / expressions /  # avoiding-race-conditions-using-f
+        # User.objects.filter(id=request.user.id).update(points=F('points') - total_fee)
+
         # 사용자 포인트 차감
         request.user.points -= total_fee
         request.user.save()
@@ -56,6 +62,16 @@ class ParkingViewSet(mixins.CreateModelMixin,
         queryset = self.queryset.filter(user=request.user)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    # queryset도 dynamic 하게 override 가능
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        if self.action == 'list':
+            qs = qs.filter(user=self.request.user)
+            return qs
+
+        return qs
 
     def update(self, request, *args, **kwargs):
         """
